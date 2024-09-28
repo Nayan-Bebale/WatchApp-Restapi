@@ -1,9 +1,33 @@
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from restWatch_app.models import WatchList, StreamPlatform
-from restWatch_app.api.serializers import WatchListSerializer, StreamPlatformSerializer
+from restWatch_app.models import (WatchList, 
+                                  StreamPlatform, Review)
+from restWatch_app.api.serializers import (WatchListSerializer, 
+                                           StreamPlatformSerializer, ReviewSerializer)
 from rest_framework import status
+from rest_framework import generics
+
+
+class ReviewListCreate(generics.ListCreateAPIView):
+    serializer_class = ReviewSerializer
+
+    def perform_create(self, serializer):
+        pk = self.kwargs["pk"]
+        watch = WatchList.objects.get(pk=pk)
+        serializer.save(watchlist=watch)
+
+class ReviewList(generics.ListCreateAPIView):
+    # queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs["pk"]
+        return Review.objects.filter(watchlist=pk)
+
+class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
 
 class WatchListAV(APIView):
     def get(self, request):
