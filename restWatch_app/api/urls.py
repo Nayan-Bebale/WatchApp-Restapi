@@ -1,7 +1,12 @@
 from django.urls import path
+from rest_framework import routers
 from .view import (WatchListAV, WatchDetailAV,
                     StreamPlatformAV, StreamPlatformDetailAV, 
-                    ReviewList, ReviewDetail, ReviewListCreate)
+                    ReviewList, ReviewDetail, ReviewListCreate,
+                    StreamPlatformVS)
+
+router = routers.DefaultRouter()
+router.register(r"platform", StreamPlatformVS, basename="streamplatform")
 
 urlpatterns = [
     path("list/", WatchListAV.as_view(), name="watch-list"),
